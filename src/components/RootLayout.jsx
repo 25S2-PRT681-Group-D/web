@@ -5,9 +5,9 @@ import Footer from './Footer'
 
 const RootLayout = () => {
   return (
-    <div className='w-full h-screen bg-[#F5F5F5] flex flex-col items-center'>
+    <div className='w-full min-h-screen bg-cloudwhite flex flex-col items-center font-zilla'>
       <Header />
-      <div className='w-full max-w-[1440px] px-4 py-8 grow-1'>
+      <div className='flex flex-1 w-full max-w-[1440px] px-4 py-8'>
         <Outlet />
       </div>
       <Footer />

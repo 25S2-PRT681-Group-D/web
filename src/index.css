@@ -4,10 +4,10 @@
 
 @theme {
   --font-zilla: 'Zilla Slab', 'sans-serif';
-  --color-territory-ochre: '#D95B43';
-  --color-savanna-green: '#7A9A3E';
-  --color-arafura-blue: '#00A0B0';
-  --color-acacia-gold: '#FFD700';
-  --color-charcoal-grey: '#36454F';
-  --color-cloud-white: '#F5F5F5';
+  --color-territoryochre: #D95B43;
+  --color-savannagreen: #7A9A3E;
+  --color-arafurablue: #00A0B0;
+  --color-acaciagold: #FFD700;
+  --color-charcoalgrey: #36454F;
+  --color-cloudwhite: #F5F5F5;
 }

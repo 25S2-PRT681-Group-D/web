@@ -2,7 +2,7 @@ import React from 'react'
 import logo from '../assets/AgroScan.svg'
 
 const links = [
-  {path: '/dashoboard', text: 'Dashboard'},
+  {path: '/', text: 'Dashboard'},
   {path: '/new-inspection', text: 'New Inspection'},
   {path: '/my-records', text: 'My Records'},
   {path: '/log-out', text: 'Log Out'}
