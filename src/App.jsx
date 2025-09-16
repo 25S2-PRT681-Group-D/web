@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import { RootLayout } from './components';
-import { Auth, Dashboard } from './pages';
+import { AnalysisResult, Auth, Dashboard, MyRecords, NewInspection } from './pages';
 
 const router = createBrowserRouter([
   {
@@ -15,6 +15,18 @@ const router = createBrowserRouter([
       {
         path: 'auth',
         element: <Auth />
+      },
+      {
+        path: 'new-inspection',
+        element: <NewInspection />
+      },
+      {
+        path: 'analysis/:analysisId',
+        element: <AnalysisResult />
+      },
+      {
+        path: 'my-records',
+        element: <MyRecords />
       }
     ]
   }

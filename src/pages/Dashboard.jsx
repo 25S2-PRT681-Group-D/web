@@ -37,21 +37,21 @@ const Dashboard = () => {
             date="Sep 9, 2025"
             status="AI: Early Blight"
             statusType="alert"
-            color="savannagreen"
+            bgColor="bg-savannagreen"
           />
           <InspectionCard
             plantName="Corn Stalk"
             date="Sep 9, 2025"
             status="AI: Healthy"
             statusType="healthy"
-            color="acaciagold"
+            bgColor="bg-acaciagold"
           />
           <InspectionCard
             plantName="Bell Pepper"
             date="Sep 9, 2025"
             status="AI: Healthy"
             statusType="healthy"
-            color="territoryochre"
+            bgColor="bg-territoryochre"
           />
         </div>
       </section>

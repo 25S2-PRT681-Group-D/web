@@ -1,6 +1,6 @@
 import React from 'react';
 
-function InspectionCard({ plantName, date, status, statusType, color }) {
+function InspectionCard({ plantName, date, status, statusType, bgColor }) {
   const statusClassName = statusType === 'healthy' ? 'text-savannagreen bg-savannagreen/10' : 'text-territoryochre bg-territoryochre/10';
 
   return (
@@ -8,7 +8,7 @@ function InspectionCard({ plantName, date, status, statusType, color }) {
     className='bg-white w-full flex flex-col items-center rounded-lg shadow-lg shadow-charcoalgrey/50 hover:-translate-y-2 transition duration-300'
     onClick={() => {}}
     >
-      <div className={`bg-${color} w-full h-[200px] flex items-center justify-center`}>
+      <div className={`${bgColor} w-full h-[200px] flex items-center justify-center rounded-t-lg`}>
         <h3 className='text-4xl text-cloudwhite font-semibold'>{plantName}</h3>
       </div>
       <div className='w-full p-6 flex flex-col items-start justify-start gap-4'>

@@ -78,12 +78,10 @@ function Analytics() {
             Toggle AI Advice
           </button>
         </div>
-        {showSummary && (
-          <div className="bg-arafurablue/20 p-4 flex flex-col items-start gap-2 rounded-lg border-l-4 border-arafurablue">
-            <h3 className='text-2xl text-arafurablue font-semibold'>AI Summary</h3>
-            <p className='text-lg text-charcoalgrey'>Based on the selected data, your tomato plants show a 15% increase in 'Early Blight' detections this week, while corn remains consistently healthy. Overall, 80% of your recent inspections are rated 'Healthy'.</p>
-          </div>
-        )}
+        <div className={`bg-arafurablue/20 p-4 flex-col items-start gap-2 rounded-lg border-l-4 border-arafurablue ${showSummary ? 'flex opacity-100' : 'hidden opacity-0'} transition duration-300`}>
+          <h3 className='text-2xl text-arafurablue font-semibold'>AI Summary</h3>
+          <p className='text-lg text-charcoalgrey'>Based on the selected data, your tomato plants show a 15% increase in 'Early Blight' detections this week, while corn remains consistently healthy. Overall, 80% of your recent inspections are rated 'Healthy'.</p>
+        </div>
       </div>
     </section>
   );
