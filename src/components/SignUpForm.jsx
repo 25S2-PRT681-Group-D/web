@@ -1,19 +1,73 @@
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { register as registerAPI } from '../api/auth.js';
+import { registerStart, registerSuccess, registerFailure } from '../store/authSlice';
+
 const SignUpForm = ({ toggleForm }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [role, setRole] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(registerStart());
+    try {
+      const response = await registerAPI({ firstName, lastName, role, email, password });
+      dispatch(registerSuccess({
+        user: response.user || { email, firstName, lastName, role },
+        token: response.token
+      }));
+      toast.success('Account created successfully!');
+      navigate('/');
+    } catch (err) {
+      const errorMessage = err.message || 'Sign up failed';
+      dispatch(registerFailure(errorMessage));
+      toast.error(errorMessage);
+    }
+  };
+
   return (
     <div className="w-full max-w-[50vw] bg-white rounded-2xl shadow-xl p-8 md:p-12">
       <h1 className="text-3xl font-bold text-center text-charcoalgrey mb-2">Create Account</h1>
       <p className="text-center text-charcoalgrey mb-8">Sign up to get instant AI diagnostics for your plants.</p>
-      <form className="space-y-6">
-        <div>
-          <label htmlFor="fullName" className="block text-sm font-semibold text-charcoalgrey mb-1">
-            Full Name
-          </label>
-          <input
-            type="text"
-            id="fullName"
-            placeholder="e.g., Jane Doe"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-          />
+      {error && <p className="text-center text-red-600 mb-2">{error}</p>}
+      <form className="space-y-6" onSubmit={onSubmit}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-semibold text-charcoalgrey mb-1">
+              First Name
+            </label>
+            <input
+              type="text"
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="e.g., Jane"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-semibold text-charcoalgrey mb-1">
+              Last Name
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="e.g., Doe"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
         </div>
         <div>
           <label htmlFor="role" className="block text-sm font-semibold text-charcoalgrey mb-1">
@@ -21,13 +75,16 @@ const SignUpForm = ({ toggleForm }) => {
           </label>
           <select
             id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-charcoalgrey"
+            required
           >
-            <option>Select your role</option>
-            <option>Farmer</option>
-            <option>Gardener</option>
-            <option>Researcher</option>
-            <option>Student</option>
+            <option value="">Select your role</option>
+            <option value="Farmer">Farmer</option>
+            <option value="Gardener">Gardener</option>
+            <option value="Researcher">Researcher</option>
+            <option value="Student">Student</option>
           </select>
         </div>
         <div>
@@ -37,8 +94,11 @@ const SignUpForm = ({ toggleForm }) => {
           <input
             type="email"
             id="email-signup"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+            required
           />
         </div>
         <div>
@@ -48,15 +108,19 @@ const SignUpForm = ({ toggleForm }) => {
           <input
             type="password"
             id="password-signup"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Minimum 8 characters"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+            required
           />
         </div>
         <button
           type="submit"
-          className="w-full bg-territoryochre text-white font-bold py-3 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300"
+          disabled={loading}
+          className="w-full bg-territoryochre text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-charcoalgrey/50 disabled:opacity-60"
         >
-          Create Account
+          {loading ? 'Creating...' : 'Create Account'}
         </button>
       </form>
       <p className="text-center text-gray-600 mt-8">

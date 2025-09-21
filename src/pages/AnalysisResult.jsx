@@ -1,21 +1,89 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ConfidenceBar, StatusPill, RecommendationItem } from '../components';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getInspectionById } from '../api/inspections.js';
+import { toast } from 'react-toastify';
 
 const AnalysisResult = () => {
-  const analysisData = {
-    plantName: 'Tomato Plant',
-    inspectionDate: 'September 11, 2025',
-    yourNotes: 'Saw some yellowing on the lower leaves and a few dark spots. Plant seems a bit weaker than the others in the same row.',
-    diagnosis: 'Early Blight',
-    status: 'At Risk',
-    confidence: 92,
-    description: "Early blight is a common fungal disease that affects tomatoes. It's caused by the fungus Alternaria solani and typically appears on older leaves first as small, dark lesions which can enlarge and form a 'bull's-eye' pattern.",
-    recommendations: [
-      'Remove & Destroy: Immediately prune and destroy affected lower leaves to prevent the fungus from spreading. Do not compost them.',
-      'Improve Airflow: Ensure adequate spacing between plants to promote air circulation, which helps leaves dry faster and reduces fungal growth.',
-      "Fungicide Application: Apply a fungicide containing copper or chlorothalonil, following the product's instructions carefully, especially on new growth.",
-    ],
-  };
+  const { analysisId } = useParams();
+  const navigate = useNavigate();
+  const [inspection, setInspection] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [imageUrl, setImageUrl] = useState(null);
+
+  useEffect(() => {
+    const fetchInspectionData = async () => {
+      try {
+        setLoading(true);
+        // For now, we'll use the analysisId as the inspection ID
+        // In a real scenario, you'd have a mapping between analysis and inspection
+        const inspectionData = await getInspectionById(analysisId);
+        
+        if (inspectionData) {
+          setInspection(inspectionData);
+          
+          // Get the first image if available
+          if (inspectionData.images && inspectionData.images.length > 0) {
+            // Convert base64 image to data URL
+            const imageData = inspectionData.images[0].image;
+            setImageUrl(`data:image/jpeg;base64,${imageData}`);
+          }
+        }
+      } catch (error) {
+        toast.error('Failed to load inspection data');
+        console.error('Error fetching inspection:', error);
+        // Fallback to dummy data if API fails
+        setInspection({
+          plantName: 'Plant Sample',
+          inspectionDate: new Date().toISOString(),
+          notes: 'Auto-generated sample notes.',
+          analysis: {
+            status: 'Healthy',
+            confidenceScore: 85,
+            description: 'This is a randomly generated analysis description for demo purposes.',
+            treatmentRecommendation: 'Continue monitoring the plant for any changes.'
+          }
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInspectionData();
+  }, [analysisId]);
+
+  const analysisData = inspection ? {
+    plantName: inspection.plantName,
+    inspectionDate: new Date(inspection.inspectionDate).toLocaleDateString(),
+    yourNotes: inspection.notes || 'No notes provided.',
+    diagnosis: inspection.analysis?.status || 'Unknown',
+    status: inspection.analysis?.status || 'Unknown',
+    confidence: inspection.analysis?.confidenceScore || 0,
+    description: inspection.analysis?.description || 'No description available.',
+    recommendations: inspection.analysis?.treatmentRecommendation ? 
+      [inspection.analysis.treatmentRecommendation] : 
+      ['Continue monitoring the plant for any changes.']
+  } : null;
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-5xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-lg shadow-charcoalgrey/50">
+        <div className="text-center py-10">
+          <div className="text-lg text-gray-500">Loading analysis results...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!analysisData) {
+    return (
+      <div className="w-full max-w-5xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-lg shadow-charcoalgrey/50">
+        <div className="text-center py-10">
+          <div className="text-lg text-gray-500">No analysis data available.</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-5xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-lg shadow-charcoalgrey/50">
@@ -26,8 +94,18 @@ const AnalysisResult = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 py-8 border-b border-charcoalgrey">
         {/* Left Column */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-territoryochre text-white flex items-center justify-center h-48 rounded-lg">
-            <span className="text-2xl font-bold">Uploaded Plant</span>
+          <div className="h-48 rounded-lg overflow-hidden">
+            {imageUrl ? (
+              <img 
+                src={imageUrl} 
+                alt="Uploaded plant" 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="bg-territoryochre text-white flex items-center justify-center h-full">
+                <span className="text-2xl font-bold">No Image Available</span>
+              </div>
+            )}
           </div>
           <div>
             <h3 className="text-xl font-bold text-charcoalgrey">{analysisData.plantName}</h3>
@@ -73,10 +151,16 @@ const AnalysisResult = () => {
 
       {/* Action Buttons */}
       <div className="mt-12 flex flex-col md:flex-row gap-4">
-        <button className="w-full md:w-auto flex-1 bg-territoryochre text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-charcoalgrey/50 hover:-translate-y-2 transition duration-300">
+        <button 
+          onClick={() => navigate('/my-records')}
+          className="w-full md:w-auto flex-1 bg-territoryochre text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-charcoalgrey/50 hover:-translate-y-2 transition duration-300"
+        >
           View All Inspections
         </button>
-        <button className="w-full md:w-auto flex-1 border border-arafurablue text-arafurablue font-bold py-3 px-6 rounded-lg shadow-lg shadow-charcoalgrey/50 hover:-translate-y-2 transition duration-300">
+        <button 
+          onClick={() => navigate('/new-inspection')}
+          className="w-full md:w-auto flex-1 border border-arafurablue text-arafurablue font-bold py-3 px-6 rounded-lg shadow-lg shadow-charcoalgrey/50 hover:-translate-y-2 transition duration-300"
+        >
           Start New Inspection
         </button>
       </div>

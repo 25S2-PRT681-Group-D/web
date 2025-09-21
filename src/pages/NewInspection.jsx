@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { FileUpload, TextInput, TextArea, SelectInput } from '../components';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { createInspection, uploadInspectionImage } from '../api/inspections.js';
 
 const NewInspection = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +14,9 @@ const NewInspection = () => {
     notes: '',
   });
   const [plantPhoto, setPlantPhoto] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,12 +27,39 @@ const NewInspection = () => {
     setPlantPhoto(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Combine file and form data for submission
-    const submissionData = { ...formData, plantPhoto };
-    console.log('Submitting for AI Analysis:', submissionData);
-    // Add your API submission logic here
+    setError('');
+    if (!plantPhoto) {
+      setError('Please upload a plant photo.');
+      toast.error('Please upload a plant photo.');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const payload = {
+        plantName: formData.plantName,
+        inspectionDate: formData.inspectionDate ? new Date(formData.inspectionDate).toISOString() : new Date().toISOString(),
+        country: formData.country,
+        state: formData.state,
+        city: formData.city,
+        notes: formData.notes || null,
+      };
+      const created = await createInspection(payload);
+      if (created?.id) {
+        await uploadInspectionImage({ inspectionId: created.id, file: plantPhoto });
+      }
+      toast.success('Inspection submitted successfully!');
+      // Redirect to analysis page with random dummy id
+      const dummyId = Math.floor(Math.random() * 100000) + 1;
+      navigate(`/analysis/${dummyId}`);
+    } catch (err) {
+      const errorMessage = err.message || 'Submission failed';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -36,6 +69,7 @@ const NewInspection = () => {
           <p className="text-gray-500 mt-2">Upload a photo to get an instant AI-powered analysis.</p>
         </div>
 
+        {error && <p className="text-red-600 mb-2">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-6">
           <FileUpload onFileChange={handleFileChange} />
 
@@ -90,9 +124,10 @@ const NewInspection = () => {
           <div>
             <button
               type="submit"
-              className="w-full bg-territoryochre text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-charcoalgrey/50 hover:-translate-y-2 transition duration-300"
+              disabled={submitting}
+              className="w-full bg-territoryochre text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-charcoalgrey/50 disabled:opacity-60"
             >
-              Submit for AI Analysis
+              {submitting ? 'Submitting...' : 'Submit for AI Analysis'}
             </button>
           </div>
         </form>
