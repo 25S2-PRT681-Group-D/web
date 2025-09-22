@@ -155,6 +155,7 @@ const Dashboard = () => {
                 status={`AI: ${inspection.status}`}
                 statusType={inspection.statusType}
                 bgColor={inspection.bgColor}
+                inspectionId={inspection.id}
               />
             ))
           ) : (
