@@ -1,7 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { FilterBar, RecordItem } from '../components';
 import { getMyInspections } from '../api/inspections.js';
 import { toast } from 'react-toastify';
+import { 
+  pageTransitionVariants, 
+  fadeInVariants, 
+  staggerContainer,
+  pulseVariants 
+} from '../utils/animations';
 
 const MyRecords = () => {
   const [records, setRecords] = useState([]);
@@ -102,51 +109,107 @@ const MyRecords = () => {
   }, [records]);
 
   return (
-    <div className="w-full max-w-5xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg border border-gray-200">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
+    <motion.div 
+      className="w-full max-w-5xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg border border-gray-200"
+      variants={pageTransitionVariants}
+      initial="initial"
+      animate="in"
+      exit="out"
+    >
+      <motion.h1 
+        className="text-3xl font-bold text-gray-800 mb-8"
+        variants={fadeInVariants}
+        initial="hidden"
+        animate="visible"
+      >
         My Records
-      </h1>
+      </motion.h1>
 
-      <FilterBar
-        searchTerm={searchTerm}
-        onSearchChange={(e) => setSearchTerm(e.target.value)}
-        plantFilter={plantFilter}
-        onPlantFilterChange={(e) => setPlantFilter(e.target.value)}
-        statusFilter={statusFilter}
-        onStatusFilterChange={(e) => setStatusFilter(e.target.value)}
-        plantTypes={plantTypes}
-        statusTypes={statusTypes}
-      />
+      <motion.div
+        variants={fadeInVariants}
+        initial="hidden"
+        animate="visible"
+        transition={{ delay: 0.2 }}
+      >
+        <FilterBar
+          searchTerm={searchTerm}
+          onSearchChange={(e) => setSearchTerm(e.target.value)}
+          plantFilter={plantFilter}
+          onPlantFilterChange={(e) => setPlantFilter(e.target.value)}
+          statusFilter={statusFilter}
+          onStatusFilterChange={(e) => setStatusFilter(e.target.value)}
+          plantTypes={plantTypes}
+          statusTypes={statusTypes}
+        />
+      </motion.div>
 
-      <div className="mt-8 space-y-4">
+      <motion.div 
+        className="mt-8 space-y-4"
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+      >
         {loading ? (
-          <div className="text-center py-10">
+          <motion.div 
+            className="text-center py-10"
+            variants={pulseVariants}
+            animate="animate"
+          >
             <div className="text-lg text-gray-500">Loading your inspection records...</div>
-          </div>
+          </motion.div>
         ) : paginatedRecords.length > 0 ? (
-          paginatedRecords.map((record) => (
-            <RecordItem key={record.id} record={record} />
+          paginatedRecords.map((record, index) => (
+            <motion.div
+              key={record.id}
+              variants={fadeInVariants}
+              transition={{ delay: index * 0.1 }}
+            >
+              <RecordItem record={record} />
+            </motion.div>
           ))
         ) : (
-          <p className="text-center text-gray-500 py-10">No records found.</p>
+          <motion.p 
+            className="text-center text-gray-500 py-10"
+            variants={fadeInVariants}
+          >
+            No records found.
+          </motion.p>
         )}
-      </div>
+      </motion.div>
 
       {/* Pagination */}
       {!loading && totalPages > 1 && (
-        <div className="mt-8 flex items-center justify-between">
-          <div className="text-sm text-gray-500">
+        <motion.div 
+          className="mt-8 flex items-center justify-between"
+          variants={fadeInVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.3 }}
+        >
+          <motion.div 
+            className="text-sm text-gray-500"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             Showing {((currentPage - 1) * recordsPerPage) + 1} to {Math.min(currentPage * recordsPerPage, totalRecords)} of {totalRecords} records
-          </div>
+          </motion.div>
           
-          <div className="flex items-center space-x-2">
-            <button
+          <motion.div 
+            className="flex items-center space-x-2"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <motion.button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Previous
-            </button>
+            </motion.button>
             
             <div className="flex space-x-1">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -162,7 +225,7 @@ const MyRecords = () => {
                 }
                 
                 return (
-                  <button
+                  <motion.button
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
                     className={`px-3 py-2 text-sm font-medium rounded-md ${
@@ -170,24 +233,31 @@ const MyRecords = () => {
                         ? 'bg-territoryochre text-white'
                         : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
                     }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.05 }}
                   >
                     {pageNum}
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
             
-            <button
+            <motion.button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
               className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Next
-            </button>
-          </div>
-        </div>
+            </motion.button>
+          </motion.div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

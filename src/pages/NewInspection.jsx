@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { FileUpload, TextInput, TextArea, SelectInput } from '../components';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { createInspection, uploadInspectionImage } from '../api/inspections.js';
+import { 
+  pageTransitionVariants, 
+  fadeInVariants, 
+  staggerContainer,
+  buttonPressVariants,
+  shakeVariants 
+} from '../utils/animations';
 
 const NewInspection = () => {
   const [formData, setFormData] = useState({
@@ -63,33 +71,81 @@ const NewInspection = () => {
   };
 
   return (
-      <div className="w-full mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg border border-gray-200">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Start New Inspection</h1>
-          <p className="text-gray-500 mt-2">Upload a photo to get an instant AI-powered analysis.</p>
-        </div>
+    <motion.div 
+      className="w-full mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg border border-gray-200"
+      variants={pageTransitionVariants}
+      initial="initial"
+      animate="in"
+      exit="out"
+    >
+      <motion.div 
+        className="text-center mb-8"
+        variants={fadeInVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h1 
+          className="text-3xl font-bold text-gray-800"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          Start New Inspection
+        </motion.h1>
+        <motion.p 
+          className="text-gray-500 mt-2"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          Upload a photo to get an instant AI-powered analysis.
+        </motion.p>
+      </motion.div>
 
-        {error && <p className="text-red-600 mb-2">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <FileUpload onFileChange={handleFileChange} />
+        {error && (
+          <motion.p 
+            className="text-red-600 mb-2"
+            variants={shakeVariants}
+            animate="animate"
+          >
+            {error}
+          </motion.p>
+        )}
+        <motion.form 
+          onSubmit={handleSubmit} 
+          className="space-y-6"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={fadeInVariants}>
+            <FileUpload onFileChange={handleFileChange} />
+          </motion.div>
 
-          <TextInput
-            label="Plant Name"
-            name="plantName"
-            value={formData.plantName}
-            onChange={handleChange}
-            placeholder="e.g., Tomato, Corn, etc."
-          />
+          <motion.div variants={fadeInVariants}>
+            <TextInput
+              label="Plant Name"
+              name="plantName"
+              value={formData.plantName}
+              onChange={handleChange}
+              placeholder="e.g., Tomato, Corn, etc."
+            />
+          </motion.div>
 
-          <TextInput
-            label="Inspection Date"
-            name="inspectionDate"
-            type="date"
-            value={formData.inspectionDate}
-            onChange={handleChange}
-          />
+          <motion.div variants={fadeInVariants}>
+            <TextInput
+              label="Inspection Date"
+              name="inspectionDate"
+              type="date"
+              value={formData.inspectionDate}
+              onChange={handleChange}
+            />
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            variants={fadeInVariants}
+          >
             <SelectInput
               label="Country"
               name="country"
@@ -111,27 +167,32 @@ const NewInspection = () => {
               onChange={handleChange}
               options={['Darwin', 'Perth', 'Adelaide', 'Brisbane', 'Sydney', 'Melbourne', 'Hobart']}
             />
-          </div>
+          </motion.div>
 
-          <TextArea
-            label="Notes (Optional)"
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
-            placeholder="e.g., Saw some yellowing on the lower leaves ..."
-          />
+          <motion.div variants={fadeInVariants}>
+            <TextArea
+              label="Notes (Optional)"
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              placeholder="e.g., Saw some yellowing on the lower leaves ..."
+            />
+          </motion.div>
 
-          <div>
-            <button
+          <motion.div variants={fadeInVariants}>
+            <motion.button
               type="submit"
               disabled={submitting}
               className="w-full bg-territoryochre text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-charcoalgrey/50 disabled:opacity-60"
+              variants={buttonPressVariants}
+              whileHover="hover"
+              whileTap="press"
             >
               {submitting ? 'Submitting...' : 'Submit for AI Analysis'}
-            </button>
-          </div>
-        </form>
-      </div>
+            </motion.button>
+          </motion.div>
+        </motion.form>
+    </motion.div>
   );
 };
 
