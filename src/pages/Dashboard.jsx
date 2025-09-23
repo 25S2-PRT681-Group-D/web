@@ -168,6 +168,7 @@ const Dashboard = () => {
       </motion.section>
 
       <motion.div
+        className='w-full'
         variants={fadeInVariants}
         initial="hidden"
         animate="visible"

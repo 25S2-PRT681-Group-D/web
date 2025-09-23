@@ -184,13 +184,13 @@ function Analytics() {
         ) : (
           <>
             {activeView === 'Table' && (
-              <div className="w-full">
+              <div className="w-full max-h-[90%] overflow-auto border border-gray-200 rounded-lg">
                 <table className="min-w-full text-left text-sm">
-                  <thead>
+                  <thead className="sticky top-0 bg-white z-10">
                     {tableInstance.getHeaderGroups().map(headerGroup => (
                       <tr key={headerGroup.id}>
                         {headerGroup.headers.map(header => (
-                          <th key={header.id} className="px-4 py-2 border-b">
+                          <th key={header.id} className="px-4 py-2 border-b bg-white font-semibold text-gray-700">
                             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                           </th>
                         ))}
@@ -199,7 +199,7 @@ function Analytics() {
                   </thead>
                   <tbody>
                     {tableInstance.getRowModel().rows.map(row => (
-                      <tr key={row.id}>
+                      <tr key={row.id} className="hover:bg-gray-50 transition-colors">
                         {row.getVisibleCells().map(cell => (
                           <td key={cell.id} className="px-4 py-2 border-b">
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}

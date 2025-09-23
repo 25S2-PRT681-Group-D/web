@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion'
 import { LoginForm, SignUpForm } from '../components';
 import { pageTransitionVariants, slideUpVariants } from '../utils/animations';
@@ -21,6 +22,7 @@ const Auth = () => {
       <AnimatePresence mode="wait">
         {isLoginView ? (
           <motion.div
+            className="w-full flex flex-col items-center"
             key="login"
             variants={slideUpVariants}
             initial="hidden"
@@ -31,6 +33,7 @@ const Auth = () => {
           </motion.div>
         ) : (
           <motion.div
+            className="w-full flex flex-col items-center"
             key="signup"
             variants={slideUpVariants}
             initial="hidden"

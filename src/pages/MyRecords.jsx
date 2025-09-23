@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { FilterBar, RecordItem } from '../components';
 import { getMyInspections } from '../api/inspections.js';
@@ -9,6 +10,7 @@ import {
   staggerContainer,
   pulseVariants 
 } from '../utils/animations';
+import { useNavigate } from 'react-router-dom';
 
 const MyRecords = () => {
   const [records, setRecords] = useState([]);
@@ -20,7 +22,7 @@ const MyRecords = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const recordsPerPage = 10;
-
+  const navigate = useNavigate();
   // Fetch user's inspection records
   useEffect(() => {
     const fetchRecords = async () => {
@@ -163,6 +165,7 @@ const MyRecords = () => {
               key={record.id}
               variants={fadeInVariants}
               transition={{ delay: index * 0.1 }}
+              onClick={() => navigate(`/analysis/${record.id}`)}  
             >
               <RecordItem record={record} />
             </motion.div>
