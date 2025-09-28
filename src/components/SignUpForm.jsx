@@ -34,12 +34,12 @@ const SignUpForm = ({ toggleForm }) => {
   };
 
   return (
-    <div className="w-full max-w-[50vw] bg-white rounded-2xl shadow-xl p-8 md:p-12">
+    <div className="w-full max-w-md sm:max-w-lg bg-white rounded-2xl shadow-xl p-6 sm:p-8">
       <h1 className="text-3xl font-bold text-center text-charcoalgrey mb-2">Create Account</h1>
       <p className="text-center text-charcoalgrey mb-8">Sign up to get instant AI diagnostics for your plants.</p>
       {error && <p className="text-center text-red-600 mb-2">{error}</p>}
       <form className="space-y-6" onSubmit={onSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label htmlFor="firstName" className="block text-sm font-semibold text-charcoalgrey mb-1">
               First Name

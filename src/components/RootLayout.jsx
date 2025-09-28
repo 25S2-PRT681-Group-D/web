@@ -4,13 +4,14 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import Header from './Header'
 import { Outlet } from 'react-router-dom'
 import Footer from './Footer'
+import NatureBackground from './NatureBackground'
 import { initializeAuth } from '../store/authSlice'
 
 const RootLayout = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated } = useSelector((state) => state.auth)
+  const { isAuthenticated, isInitialized } = useSelector((state) => state.auth)
 
   useEffect(() => {
     // Initialize auth state from storage
@@ -18,20 +19,34 @@ const RootLayout = () => {
   }, [dispatch])
 
   useEffect(() => {
-    // Redirect to auth page if not authenticated and not already on auth page
-    if (!isAuthenticated && location.pathname !== '/auth') {
+    // Only redirect after auth has been initialized
+    if (isInitialized && !isAuthenticated && location.pathname !== '/auth') {
       navigate('/auth')
     }
-  }, [isAuthenticated, location.pathname, navigate])
+  }, [isAuthenticated, isInitialized, location.pathname, navigate])
+
+  // Show loading while auth is being initialized
+  if (!isInitialized) {
+    return (
+      <NatureBackground className='w-full min-h-screen bg-cloudwhite flex flex-col font-zilla'>
+        <div className='flex-1 flex items-center justify-center'>
+          <div className='text-center'>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-territoryochre mx-auto mb-4'></div>
+            <p className='text-charcoalgrey'>Loading...</p>
+          </div>
+        </div>
+      </NatureBackground>
+    )
+  }
 
   return (
-    <div className='w-full min-h-screen bg-cloudwhite flex flex-col items-center font-zilla'>
+    <NatureBackground className='w-full min-h-screen bg-cloudwhite flex flex-col font-zilla'>
       <Header />
-      <div className='flex flex-1 w-full max-w-[1440px] px-4 py-8'>
+      <main className='flex-1 w-full max-w-[1440px] mx-auto px-4 py-8'>
         <Outlet />
-      </div>
+      </main>
       <Footer />
-    </div>
+    </NatureBackground>
   )
 }
 

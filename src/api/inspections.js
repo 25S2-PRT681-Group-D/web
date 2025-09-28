@@ -19,6 +19,38 @@ export async function uploadInspectionImage({ inspectionId, file }) {
 	});
 }
 
+/**
+ * Upload multiple images for an inspection
+ * @param {Object} params - The parameters object
+ * @param {number} params.inspectionId - The ID of the inspection
+ * @param {File[]} params.files - Array of File objects to upload
+ * @returns {Promise<Array>} Array of uploaded image DTOs
+ * 
+ * @example
+ * // Upload multiple images
+ * const files = Array.from(fileInput.files); // Get files from input element
+ * const result = await uploadMultipleInspectionImages({
+ *   inspectionId: 123,
+ *   files: files
+ * });
+ * console.log('Uploaded images:', result);
+ */
+export async function uploadMultipleInspectionImages({ inspectionId, files }) {
+	const form = new FormData();
+	form.append('InspectionId', inspectionId);
+	
+	// Append each file to the form data
+	files.forEach((file, index) => {
+		form.append('ImageFiles', file);
+	});
+	
+	return await apiRequest('/images/upload-multiple', {
+		method: 'POST',
+		body: form,
+		isFormData: true,
+	});
+}
+
 export async function getMyInspections() {
   return await apiRequest('/inspections/my-inspections');
 }

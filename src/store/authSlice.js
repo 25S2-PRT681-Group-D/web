@@ -10,6 +10,7 @@ const initialState = {
   token: null,
   loading: false,
   error: null,
+  isInitialized: false, // Add flag to track if auth has been initialized
 };
 
 const authSlice = createSlice({
@@ -27,6 +28,9 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.error = null;
       setAuthToken(action.payload.token);
+      // Save to localStorage
+      localStorage.setItem('agroscan_token', action.payload.token);
+      localStorage.setItem('agroscan_user', JSON.stringify(action.payload.user));
     },
     loginFailure: (state, action) => {
       state.loading = false;
@@ -46,6 +50,9 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.error = null;
       setAuthToken(action.payload.token);
+      // Save to localStorage
+      localStorage.setItem('agroscan_token', action.payload.token);
+      localStorage.setItem('agroscan_user', JSON.stringify(action.payload.user));
     },
     registerFailure: (state, action) => {
       state.loading = false;
@@ -61,18 +68,32 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
       setAuthToken(null);
+      // Clear localStorage
+      localStorage.removeItem('agroscan_token');
+      localStorage.removeItem('agroscan_user');
     },
     clearError: (state) => {
       state.error = null;
     },
     initializeAuth: (state) => {
-      // Check if token exists in storage
+      // Check if token and user data exist in storage
       const token = localStorage.getItem('agroscan_token');
-      if (token) {
-        state.isAuthenticated = true;
-        state.token = token;
-        // You might want to validate the token here
+      const userData = localStorage.getItem('agroscan_user');
+      
+      if (token && userData) {
+        try {
+          const user = JSON.parse(userData);
+          state.isAuthenticated = true;
+          state.token = token;
+          state.user = user;
+          setAuthToken(token);
+        } catch (error) {
+          // If user data is corrupted, clear it
+          localStorage.removeItem('agroscan_token');
+          localStorage.removeItem('agroscan_user');
+        }
       }
+      state.isInitialized = true;
     },
   },
 });

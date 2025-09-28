@@ -34,7 +34,7 @@ const LoginForm = ({ toggleForm }) => {
 
   return (
     <motion.div 
-      className="w-full max-w-[50vw] bg-white rounded-2xl shadow-xl p-4 md:p-8"
+      className="w-full max-w-md sm:max-w-lg bg-white rounded-2xl shadow-xl p-6 sm:p-8"
       variants={fadeInVariants}
       initial="hidden"
       animate="visible"

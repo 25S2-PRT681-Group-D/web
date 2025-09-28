@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion'
+import { motion } from "motion/react"
 import { SummaryCard, Analytics, InspectionCard } from '../components'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -114,29 +114,48 @@ const Dashboard = () => {
       exit="out"
     >
       <motion.div 
-        className="w-full flex flex-row items-center justify-between"
+        className="w-full flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
         variants={fadeInVariants}
         initial="hidden"
         animate="visible"
       >
-        <motion.h1 
-          className='text-5xl text-charcoalgrey font-semibold'
+        <motion.div
+          className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
           variants={slideInLeftVariants}
           initial="hidden"
           animate="visible"
         >
-          Welcome back, {user?.firstName || 'User'}!
-        </motion.h1>
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-territoryochre to-savannagreen rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-2xl">🌱</span>
+            </div>
+            <div>
+              <h1 className='text-4xl lg:text-5xl text-charcoalgrey font-bold'>
+                Welcome back, {user?.firstName || 'User'}!
+              </h1>
+              <p className="text-lg text-gray-600 mt-1">Ready to analyze your plants?</p>
+            </div>
+          </div>
+        </motion.div>
         <motion.div
+          className="flex flex-col sm:flex-row gap-3"
           variants={slideInRightVariants}
           initial="hidden"
           animate="visible"
         >
           <Link
             to="/new-inspection"
-            className="bg-territoryochre text-cloudwhite text-xl font-semibold px-4 py-2 rounded-lg shadow-lg shadow-charcoalgrey/50 hover:-translate-y-2 transition duration-300"
+            className="btn-primary text-center flex items-center justify-center gap-2"
           >
+            <span>📸</span>
             Start New Inspection
+          </Link>
+          <Link
+            to="/my-records"
+            className="btn-secondary text-center flex items-center justify-center gap-2"
+          >
+            <span>📊</span>
+            View Records
           </Link>
         </motion.div>
       </motion.div>
@@ -150,19 +169,22 @@ const Dashboard = () => {
         <motion.div variants={fadeInVariants}>
           <SummaryCard 
             title="Total Inspections" 
-            value={loading ? "..." : stats.totalInspections.toString()} 
+            value={loading ? "..." : stats.totalInspections.toString()}
+            icon="🔍"
           />
         </motion.div>
         <motion.div variants={fadeInVariants}>
           <SummaryCard 
             title="Healthy Results" 
-            value={loading ? "..." : stats.healthyResults.toString()} 
+            value={loading ? "..." : stats.healthyResults.toString()}
+            icon="🌱"
           />
         </motion.div>
         <motion.div variants={fadeInVariants}>
           <SummaryCard 
             title="Last Inspection" 
-            value={loading ? "..." : stats.lastInspection} 
+            value={loading ? "..." : stats.lastInspection}
+            icon="📅"
           />
         </motion.div>
       </motion.section>

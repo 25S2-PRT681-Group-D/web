@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import { motion } from "motion/react"
 import { FilterBar, RecordItem } from '../components';
 import { getMyInspections } from '../api/inspections.js';
 import { toast } from 'react-toastify';
@@ -118,14 +118,30 @@ const MyRecords = () => {
       animate="in"
       exit="out"
     >
-      <motion.h1 
-        className="text-3xl font-bold text-gray-800 mb-8"
+      <motion.div 
+        className="flex items-center gap-3 mb-8"
         variants={fadeInVariants}
         initial="hidden"
         animate="visible"
       >
-        My Records
-      </motion.h1>
+        <h1 className="text-3xl font-bold text-gray-800">
+          My Records
+        </h1>
+        <motion.div
+          animate={{ rotate: [0, 10, -10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+          className="text-3xl"
+        >
+          📋
+        </motion.div>
+        <motion.div
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse' }}
+          className="text-2xl"
+        >
+          🌾
+        </motion.div>
+      </motion.div>
 
       <motion.div
         variants={fadeInVariants}

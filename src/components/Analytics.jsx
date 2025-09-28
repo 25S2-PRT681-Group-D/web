@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, Legend } from 'recharts';
-import { useReactTable, getCoreRowModel, flexRender, createColumnHelper } from '@tanstack/react-table';
 import { getInspectionsWithFilters } from '../api/inspections.js';
 import { toast } from 'react-toastify';
 
@@ -16,6 +15,11 @@ function Analytics() {
   const [rawData, setRawData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [plantTypes, setPlantTypes] = useState(['All']);
+  const [sortField, setSortField] = useState('date');
+  const [sortDirection, setSortDirection] = useState('desc');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
 
   // Fetch data from API
   useEffect(() => {
@@ -64,18 +68,61 @@ function Analytics() {
   }, [selectedPlant, startDate, endDate]);
 
   const tableData = useMemo(() => {
-    // Data is already filtered by the API call, so we just return rawData
-    return rawData;
-  }, [rawData]);
+    let filteredData = rawData;
 
-  const columnHelper = createColumnHelper();
-  const columns = useMemo(() => [
-    columnHelper.accessor('date', { header: 'Date', cell: info => info.getValue() }),
-    columnHelper.accessor('plant', { header: 'Plant', cell: info => info.getValue() }),
-    columnHelper.accessor('status', { header: 'Status', cell: info => info.getValue() }),
-  ], [columnHelper]);
+    // Apply search filter
+    if (searchTerm) {
+      filteredData = filteredData.filter(item => 
+        item.plant.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.city.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
-  const tableInstance = useReactTable({ data: tableData, columns, getCoreRowModel: getCoreRowModel() });
+    // Apply sorting
+    filteredData.sort((a, b) => {
+      let aVal = a[sortField];
+      let bVal = b[sortField];
+      
+      if (sortField === 'date') {
+        aVal = new Date(aVal);
+        bVal = new Date(bVal);
+      } else if (sortField === 'confidence') {
+        aVal = Number(aVal);
+        bVal = Number(bVal);
+      } else {
+        aVal = String(aVal).toLowerCase();
+        bVal = String(bVal).toLowerCase();
+      }
+      
+      if (sortDirection === 'asc') {
+        return aVal > bVal ? 1 : -1;
+      } else {
+        return aVal < bVal ? 1 : -1;
+      }
+    });
+
+    return filteredData;
+  }, [rawData, searchTerm, sortField, sortDirection]);
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return tableData.slice(startIndex, startIndex + itemsPerPage);
+  }, [tableData, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(tableData.length / itemsPerPage);
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  // Kendo UI DataGrid doesn't need column definitions like react-table
 
   const lineData = useMemo(() => {
     // Group filtered data by day and count healthy vs issues
@@ -184,31 +231,205 @@ function Analytics() {
         ) : (
           <>
             {activeView === 'Table' && (
-              <div className="w-full max-h-[90%] overflow-auto border border-gray-200 rounded-lg">
-                <table className="min-w-full text-left text-sm">
-                  <thead className="sticky top-0 bg-white z-10">
-                    {tableInstance.getHeaderGroups().map(headerGroup => (
-                      <tr key={headerGroup.id}>
-                        {headerGroup.headers.map(header => (
-                          <th key={header.id} className="px-4 py-2 border-b bg-white font-semibold text-gray-700">
-                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                          </th>
-                        ))}
-                      </tr>
-                    ))}
+              <div className="w-full overflow-hidden" style={{ height: '70vh' }}>
+                {/* Table Controls */}
+                <div className="bg-gray-50 px-4 py-3 border-b">
+                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm text-gray-600">
+                        Showing {tableData.length} inspection{tableData.length !== 1 ? 's' : ''}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs text-gray-500">Show:</label>
+                        <select 
+                          value={itemsPerPage} 
+                          onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                          className="text-xs border border-gray-300 rounded px-2 py-1"
+                        >
+                          <option value={10}>10</option>
+                          <option value={20}>20</option>
+                          <option value={50}>50</option>
+                          <option value={100}>100</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        placeholder="Search inspections..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="text-sm border border-gray-300 rounded-lg px-3 py-2 w-64"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="overflow-auto h-full">
+                  <table className="w-full border-collapse min-w-full">
+                  <thead className="bg-gray-50 sticky top-0">
+                    <tr>
+                      <th 
+                        className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                        onClick={() => handleSort('date')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Date
+                          {sortField === 'date' && (
+                            <span className="text-xs">
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                      <th 
+                        className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                        onClick={() => handleSort('plant')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Plant
+                          {sortField === 'plant' && (
+                            <span className="text-xs">
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                      <th 
+                        className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                        onClick={() => handleSort('status')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Status
+                          {sortField === 'status' && (
+                            <span className="text-xs">
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                      <th 
+                        className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                        onClick={() => handleSort('country')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Country
+                          {sortField === 'country' && (
+                            <span className="text-xs">
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                      <th 
+                        className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                        onClick={() => handleSort('city')}
+                      >
+                        <div className="flex items-center gap-1">
+                          City
+                          {sortField === 'city' && (
+                            <span className="text-xs">
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                      <th 
+                        className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
+                        onClick={() => handleSort('confidence')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Confidence
+                          {sortField === 'confidence' && (
+                            <span className="text-xs">
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                    </tr>
                   </thead>
                   <tbody>
-                    {tableInstance.getRowModel().rows.map(row => (
-                      <tr key={row.id} className="hover:bg-gray-50 transition-colors">
-                        {row.getVisibleCells().map(cell => (
-                          <td key={cell.id} className="px-4 py-2 border-b">
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </td>
-                        ))}
+                    {paginatedData.map((item, index) => (
+                      <tr key={item.id || index} className="hover:bg-gray-50">
+                        <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">{item.date}</td>
+                        <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">{item.plant}</td>
+                        <td className="border border-gray-200 px-4 py-3 text-sm">
+                          <span 
+                            className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                              item.status === 'Healthy' 
+                                ? 'bg-green-100 text-green-800' 
+                                : item.status === 'At Risk' 
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : item.status === 'Alert'
+                                ? 'bg-orange-100 text-orange-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                        </td>
+                        <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">{item.country}</td>
+                        <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">{item.city}</td>
+                        <td className="border border-gray-200 px-4 py-3 text-sm w-32">
+                          <div className="flex items-center gap-2">
+                            <div className="w-12 bg-gray-200 rounded-full h-2 overflow-hidden">
+                              <div 
+                                className="bg-blue-600 h-2 rounded-full max-w-full" 
+                                style={{ width: `${Math.min(item.confidence * 100, 100)}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-xs text-gray-600 whitespace-nowrap">
+                              {Math.round(item.confidence)}%
+                            </span>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                  </table>
+                </div>
+                
+                {/* Pagination Controls */}
+                <div className="bg-gray-50 px-4 py-3 border-t flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, tableData.length)} of {tableData.length} results
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                        if (pageNum > totalPages) return null;
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setCurrentPage(pageNum)}
+                            className={`px-3 py-1 text-sm border rounded ${
+                              currentPage === pageNum 
+                                ? 'bg-blue-500 text-white border-blue-500' 
+                                : 'border-gray-300 hover:bg-gray-100'
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 

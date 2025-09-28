@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 // eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { LoginForm, SignUpForm } from '../components';
 import { pageTransitionVariants, slideUpVariants } from '../utils/animations';
 
@@ -13,7 +13,7 @@ const Auth = () => {
 
   return (
     <motion.div 
-      className="w-full flex flex-col items-center justify-center flex-1"
+      className="w-full flex flex-col items-center justify-center min-h-[calc(100vh-20vh)] py-8"
       variants={pageTransitionVariants}
       initial="initial"
       animate="in"

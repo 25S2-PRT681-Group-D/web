@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import { motion } from "motion/react"
 import { FileUpload, TextInput, TextArea, SelectInput } from '../components';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -73,7 +73,7 @@ const NewInspection = () => {
 
   return (
     <motion.div 
-      className="w-full mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg border border-gray-200"
+      className="w-full max-w-4xl mx-auto card p-8 md:p-12"
       variants={pageTransitionVariants}
       initial="initial"
       animate="in"
@@ -85,22 +85,38 @@ const NewInspection = () => {
         initial="hidden"
         animate="visible"
       >
-        <motion.h1 
-          className="text-3xl font-bold text-gray-800"
+        <motion.div 
+          className="flex items-center justify-center gap-3"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          Start New Inspection
-        </motion.h1>
-        <motion.p 
-          className="text-gray-500 mt-2"
+          <motion.h1 className="text-3xl font-bold text-gray-800">
+            Start New Inspection
+          </motion.h1>
+          <motion.div
+            animate={{ rotate: [0, 15, -15, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+            className="text-3xl"
+          >
+            📸
+          </motion.div>
+        </motion.div>
+        <motion.div 
+          className="flex items-center justify-center gap-2 mt-2"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          Upload a photo to get an instant AI-powered analysis.
-        </motion.p>
+          <span className="text-gray-500">Upload a photo to get an instant AI-powered analysis.</span>
+          <motion.span
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse' }}
+            className="text-2xl"
+          >
+            🤖
+          </motion.span>
+        </motion.div>
       </motion.div>
 
         {error && (
@@ -184,12 +200,22 @@ const NewInspection = () => {
             <motion.button
               type="submit"
               disabled={submitting}
-              className="w-full bg-territoryochre text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-charcoalgrey/50 disabled:opacity-60"
+              className="w-full btn-primary disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               variants={buttonPressVariants}
               whileHover="hover"
               whileTap="press"
             >
-              {submitting ? 'Submitting...' : 'Submit for AI Analysis'}
+              {submitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <span>🤖</span>
+                  Submit for AI Analysis
+                </>
+              )}
             </motion.button>
           </motion.div>
         </motion.form>
