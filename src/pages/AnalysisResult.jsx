@@ -4,7 +4,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getInspectionById } from '../api/inspections.js';
 import { toast } from 'react-toastify';
 
-// Get the base URL from environment or use default
 const API_BASE_URL = import.meta?.env?.VITE_API_BASE_URL || 'http://localhost:5010/api';
 const STATIC_BASE_URL = import.meta?.env?.VITE_STATIC_BASE_URL || 'http://localhost:5010';
 
@@ -20,24 +19,19 @@ const AnalysisResult = () => {
     const fetchInspectionData = async () => {
       try {
         setLoading(true);
-        // For now, we'll use the analysisId as the inspection ID
-        // In a real scenario, you'd have a mapping between analysis and inspection
         const inspectionData = await getInspectionById(analysisId);
         
         if (inspectionData) {
           setInspection(inspectionData);
           
-          // Get the first image if available
           if (inspectionData.images && inspectionData.images.length > 0) {
-            // Images are stored as filenames, construct the full URL
             console.log('Inspection images:', inspectionData.images);
             const imageFileName = inspectionData.images[0].image;
             if (imageFileName) {
-              // Images are served as static files from wwwroot/images/inspections/
               const fullImageUrl = `${STATIC_BASE_URL}/images/inspections/${imageFileName}`;
               console.log('Constructed image URL:', fullImageUrl);
               setImageUrl(fullImageUrl);
-              setImageError(false); // Reset error state when setting new URL
+              setImageError(false); 
             } else {
               console.warn('No image filename found in inspection data');
               setImageError(true);
@@ -49,7 +43,6 @@ const AnalysisResult = () => {
       } catch (error) {
         toast.error('Failed to load inspection data');
         console.error('Error fetching inspection:', error);
-        // Fallback to dummy data if API fails
         setInspection({
           plantName: 'Plant Sample',
           inspectionDate: new Date().toISOString(),
