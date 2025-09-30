@@ -231,7 +231,7 @@ function Analytics() {
         ) : (
           <>
             {activeView === 'Table' && (
-              <div className="w-full overflow-hidden" style={{ height: '70vh' }}>
+              <div className="w-full h-full">
                 {/* Table Controls */}
                 <div className="bg-gray-50 px-4 py-3 border-b">
                   <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -482,13 +482,13 @@ function Analytics() {
         <div className='flex flex-row items-center gap-2'>
           <button
             onClick={() => setShowSummary(!showSummary)}
-            className='bg-arafurablue text-white font-semibold rounded-lg px-4 py-2 shadow-lg shadow-charcoalgrey/50 hover:-translate-y-2 transition duration-300'
+            className='bg-arafurablue text-white font-semibold rounded-lg px-4 py-2 shadow-lg shadow-charcoalgrey/50 hover:bg-arafurablue/90 transition duration-300'
           >
             Toggle AI Summary
           </button>
           <button
             onClick={() => setShowAdvise(!showAdvise)}
-            className='bg-arafurablue text-white font-semibold rounded-lg px-4 py-2 shadow-lg shadow-charcoalgrey/50 hover:-translate-y-2 transition duration-300'
+            className='bg-arafurablue text-white font-semibold rounded-lg px-4 py-2 shadow-lg shadow-charcoalgrey/50 hover:bg-arafurablue/90 transition duration-300'
           >
             Toggle AI Advice
           </button>

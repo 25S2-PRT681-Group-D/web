@@ -53,7 +53,7 @@ const LoginForm = ({ toggleForm }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        Log in to unlock AI-powered plant insights.
+        Log in to unlock plant health insights.
       </motion.p>
       {error && (
         <motion.p 

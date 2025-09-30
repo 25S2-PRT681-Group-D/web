@@ -20,7 +20,7 @@ const RootLayout = () => {
 
   useEffect(() => {
     // Only redirect after auth has been initialized
-    if (isInitialized && !isAuthenticated && location.pathname !== '/auth') {
+    if (isInitialized && !isAuthenticated && location.pathname !== '/auth' && location.pathname !== '/') {
       navigate('/auth')
     }
   }, [isAuthenticated, isInitialized, location.pathname, navigate])
@@ -28,25 +28,27 @@ const RootLayout = () => {
   // Show loading while auth is being initialized
   if (!isInitialized) {
     return (
-      <NatureBackground className='w-full min-h-screen bg-cloudwhite flex flex-col font-zilla'>
+      <div className='w-full min-h-screen bg-cloudwhite flex flex-col font-zilla'>
         <div className='flex-1 flex items-center justify-center'>
           <div className='text-center'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-territoryochre mx-auto mb-4'></div>
+            <div className='w-12 h-12 bg-territoryochre rounded-full flex items-center justify-center mx-auto mb-4'>
+              <span className='text-white text-xl'>🌱</span>
+            </div>
             <p className='text-charcoalgrey'>Loading...</p>
           </div>
         </div>
-      </NatureBackground>
+      </div>
     )
   }
 
   return (
-    <NatureBackground className='w-full min-h-screen bg-cloudwhite flex flex-col font-zilla'>
+    <div className='w-full min-h-screen bg-cloudwhite flex flex-col font-zilla'>
       <Header />
-      <main className='flex-1 w-full max-w-[1440px] mx-auto px-4 py-8'>
+      <main className='flex-1 w-full'>
         <Outlet />
       </main>
       <Footer />
-    </NatureBackground>
+    </div>
   )
 }
 

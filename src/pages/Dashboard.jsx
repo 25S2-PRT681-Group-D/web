@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react'
-// eslint-disable-next-line no-unused-vars
-import { motion } from "motion/react"
 import { SummaryCard, Analytics, InspectionCard } from '../components'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { getMyInspections } from '../api/inspections.js'
 import { toast } from 'react-toastify'
-import { 
-  fadeInVariants, 
-  slideInLeftVariants, 
-  slideInRightVariants, 
-  staggerContainer,
-  pageTransitionVariants 
-} from '../utils/animations'
 
 const Dashboard = () => {
   const { user } = useSelector((state) => state.auth)
@@ -106,178 +97,109 @@ const Dashboard = () => {
   const recentInspections = inspections.slice(0, 3)
 
   return (
-    <motion.div 
-      className="w-full flex flex-col items-center justify-center gap-8"
-      variants={pageTransitionVariants}
-      initial="initial"
-      animate="in"
-      exit="out"
-    >
-      <motion.div 
-        className="w-full flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
-        variants={fadeInVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div
-          className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
-          variants={slideInLeftVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-territoryochre to-savannagreen rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-2xl">🌱</span>
-            </div>
-            <div>
-              <h1 className='text-4xl lg:text-5xl text-charcoalgrey font-bold'>
-                Welcome back, {user?.firstName || 'User'}!
-              </h1>
-              <p className="text-lg text-gray-600 mt-1">Ready to analyze your plants?</p>
+    <div className="w-full max-w-7xl mx-auto px-4 py-8">
+      <div className="flex flex-col gap-8">
+        {/* Hero Section */}
+        <div className="w-full bg-gradient-to-br from-savannagreen/10 to-arafurablue/10 rounded-2xl p-8">
+        <div className="w-full flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-territoryochre to-savannagreen rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-2xl">🌱</span>
+              </div>
+              <div>
+                <h1 className='text-4xl lg:text-5xl text-charcoalgrey font-bold'>
+                  Welcome back, {user?.firstName || 'User'}!
+                </h1>
+                <p className="text-lg text-gray-600 mt-1">Ready to analyze your plants with AI?</p>
+              </div>
             </div>
           </div>
-        </motion.div>
-        <motion.div
-          className="flex flex-col sm:flex-row gap-3"
-          variants={slideInRightVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <Link
-            to="/new-inspection"
-            className="btn-primary text-center flex items-center justify-center gap-2"
-          >
-            <span>📸</span>
-            Start New Inspection
-          </Link>
-          <Link
-            to="/my-records"
-            className="btn-secondary text-center flex items-center justify-center gap-2"
-          >
-            <span>📊</span>
-            View Records
-          </Link>
-        </motion.div>
-      </motion.div>
-
-      <motion.section 
-        className="w-full grid grid-cols-1 md:grid-cols-3 gap-4"
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div variants={fadeInVariants}>
-          <SummaryCard 
-            title="Total Inspections" 
-            value={loading ? "..." : stats.totalInspections.toString()}
-            icon="🔍"
-          />
-        </motion.div>
-        <motion.div variants={fadeInVariants}>
-          <SummaryCard 
-            title="Healthy Results" 
-            value={loading ? "..." : stats.healthyResults.toString()}
-            icon="🌱"
-          />
-        </motion.div>
-        <motion.div variants={fadeInVariants}>
-          <SummaryCard 
-            title="Last Inspection" 
-            value={loading ? "..." : stats.lastInspection}
-            icon="📅"
-          />
-        </motion.div>
-      </motion.section>
-
-      <motion.div
-        className='w-full'
-        variants={fadeInVariants}
-        initial="hidden"
-        animate="visible"
-        transition={{ delay: 0.3 }}
-      >
-        <Analytics />
-      </motion.div>
-
-      <motion.section 
-        className="w-full flex flex-col items-start gap-4"
-        variants={fadeInVariants}
-        initial="hidden"
-        animate="visible"
-        transition={{ delay: 0.4 }}
-      >
-        <motion.div 
-          className="w-full flex flex-row items-center justify-between"
-          variants={slideInLeftVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <h2 className='text-3xl text-charcoalgrey font-semibold'>Recent Inspections</h2>
-          <motion.div
-            variants={slideInRightVariants}
-            initial="hidden"
-            animate="visible"
-          >
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              to="/new-inspection"
+              className="btn-primary text-center flex items-center justify-center gap-2"
+            >
+              <span>📸</span>
+              Start New Inspection
+            </Link>
             <Link
               to="/my-records"
-              className='text-2xl text-arafurablue font-semibold text-shadow-lg text-shadow-charcoalgrey/25 hover:-translate-y-2 transition duration-300'
+              className="btn-secondary text-center flex items-center justify-center gap-2"
             >
-              View All
+              <span>📊</span>
+              View Records
             </Link>
-          </motion.div>
-        </motion.div>
-        <motion.div 
-          className="w-full grid grid-cols-1 md:grid-cols-3 gap-4"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
+          </div>
+        </div>
+        </div>
+
+        {/* Stats Section */}
+        <section className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+        <SummaryCard 
+          title="Total Inspections" 
+          value={loading ? "..." : stats.totalInspections.toString()}
+          icon="🔍"
+        />
+        <SummaryCard 
+          title="Healthy Results" 
+          value={loading ? "..." : stats.healthyResults.toString()}
+          icon="🌱"
+        />
+        <SummaryCard 
+          title="Last Inspection" 
+          value={loading ? "..." : stats.lastInspection}
+          icon="📅"
+        />
+      </section>
+
+      {/* Analytics Section */}
+      <div className='w-full'>
+        <Analytics />
+      </div>
+
+      {/* Recent Inspections Section */}
+      <section className="w-full flex flex-col items-start gap-4">
+        <div className="w-full flex flex-row items-center justify-between">
+          <h2 className='text-3xl text-charcoalgrey font-semibold'>Recent Inspections</h2>
+          <Link
+            to="/my-records"
+            className='text-2xl text-arafurablue font-semibold hover:text-arafurablue/80 transition duration-300'
+          >
+            View All →
+          </Link>
+        </div>
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
           {loading ? (
             // Loading state
             <>
-              <motion.div 
-                className="w-full h-32 bg-gray-200 rounded-lg animate-pulse"
-                variants={fadeInVariants}
-              ></motion.div>
-              <motion.div 
-                className="w-full h-32 bg-gray-200 rounded-lg animate-pulse"
-                variants={fadeInVariants}
-              ></motion.div>
-              <motion.div 
-                className="w-full h-32 bg-gray-200 rounded-lg animate-pulse"
-                variants={fadeInVariants}
-              ></motion.div>
+              <div className="w-full h-32 bg-gray-200 rounded-lg animate-pulse"></div>
+              <div className="w-full h-32 bg-gray-200 rounded-lg animate-pulse"></div>
+              <div className="w-full h-32 bg-gray-200 rounded-lg animate-pulse"></div>
             </>
           ) : recentInspections.length > 0 ? (
             // Display recent inspections
             recentInspections.map((inspection, index) => (
-              <motion.div
+              <InspectionCard
                 key={inspection.id}
-                variants={fadeInVariants}
-                transition={{ delay: index * 0.1 }}
-              >
-                <InspectionCard
-                  plantName={inspection.plantName}
-                  date={inspection.date}
-                  status={`AI: ${inspection.status}`}
-                  statusType={inspection.statusType}
-                  bgColor={inspection.bgColor}
-                  inspectionId={inspection.id}
-                />
-              </motion.div>
+                plantName={inspection.plantName}
+                date={inspection.date}
+                status={`AI: ${inspection.status}`}
+                statusType={inspection.statusType}
+                bgColor={inspection.bgColor}
+                inspectionId={inspection.id}
+              />
             ))
           ) : (
             // No inspections state
-            <motion.div 
-              className="col-span-full text-center py-8"
-              variants={fadeInVariants}
-            >
+            <div className="col-span-full text-center py-8">
               <p className="text-gray-500 text-lg">No inspections yet. Start your first inspection!</p>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
-      </motion.section>
-    </motion.div>
+        </div>
+        </section>
+      </div>
+    </div>
   )
 }
 

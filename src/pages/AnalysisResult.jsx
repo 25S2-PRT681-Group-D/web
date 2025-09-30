@@ -4,12 +4,17 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getInspectionById } from '../api/inspections.js';
 import { toast } from 'react-toastify';
 
+// Get the base URL from environment or use default
+const API_BASE_URL = import.meta?.env?.VITE_API_BASE_URL || 'http://localhost:5010/api';
+const STATIC_BASE_URL = import.meta?.env?.VITE_STATIC_BASE_URL || 'http://localhost:5010';
+
 const AnalysisResult = () => {
   const { analysisId } = useParams();
   const navigate = useNavigate();
   const [inspection, setInspection] = useState(null);
   const [loading, setLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState(null);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const fetchInspectionData = async () => {
@@ -24,9 +29,21 @@ const AnalysisResult = () => {
           
           // Get the first image if available
           if (inspectionData.images && inspectionData.images.length > 0) {
-            // Convert base64 image to data URL
-            const imageData = inspectionData.images[0].image;
-            setImageUrl(`data:image/jpeg;base64,${imageData}`);
+            // Images are stored as filenames, construct the full URL
+            console.log('Inspection images:', inspectionData.images);
+            const imageFileName = inspectionData.images[0].image;
+            if (imageFileName) {
+              // Images are served as static files from wwwroot/images/inspections/
+              const fullImageUrl = `${STATIC_BASE_URL}/images/inspections/${imageFileName}`;
+              console.log('Constructed image URL:', fullImageUrl);
+              setImageUrl(fullImageUrl);
+              setImageError(false); // Reset error state when setting new URL
+            } else {
+              console.warn('No image filename found in inspection data');
+              setImageError(true);
+            }
+          } else {
+            console.log('No images found for this inspection');
           }
         }
       } catch (error) {
@@ -95,15 +112,21 @@ const AnalysisResult = () => {
         {/* Left Column */}
         <div className="lg:col-span-1 space-y-6">
           <div className="h-48 rounded-lg overflow-hidden">
-            {imageUrl ? (
+            {imageUrl && !imageError ? (
               <img 
                 src={imageUrl} 
                 alt="Uploaded plant" 
                 className="w-full h-full object-cover"
+                onError={() => {
+                  console.error('Failed to load image:', imageUrl);
+                  setImageError(true);
+                }}
               />
             ) : (
               <div className="bg-territoryochre text-white flex items-center justify-center h-full">
-                <span className="text-2xl font-bold">No Image Available</span>
+                <span className="text-2xl font-bold">
+                  {imageError ? 'Image Load Failed' : 'No Image Available'}
+                </span>
               </div>
             )}
           </div>

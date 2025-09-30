@@ -41,7 +41,7 @@ body {
 
 /* Enhanced Button Styles */
 .btn-primary {
-  @apply bg-territoryochre text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300;
+  @apply bg-territoryochre text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:shadow-xl hover:bg-territoryochre/90 transition-all duration-300;
 }
 
 .btn-secondary {
@@ -54,7 +54,7 @@ body {
 }
 
 .card-hover {
-  @apply transform hover:-translate-y-2 transition-all duration-300;
+  @apply hover:shadow-xl transition-all duration-300;
 }
 
 /* Enhanced Form Styles */

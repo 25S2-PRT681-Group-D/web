@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import store from './store'
 
 import { RootLayout } from './components';
-import { AnalysisResult, Auth, Dashboard, MyRecords, NewInspection } from './pages';
+import { AnalysisResult, Auth, Dashboard, Home, MyRecords, NewInspection } from './pages';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +14,10 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
+        element: <Home />
+      },
+      {
+        path: 'dashboard',
         element: <Dashboard />
       },
       {

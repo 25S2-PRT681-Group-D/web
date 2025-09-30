@@ -108,7 +108,7 @@ const NewInspection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <span className="text-gray-500">Upload a photo to get an instant AI-powered analysis.</span>
+          <span className="text-gray-500">Upload a photo to get an instant plant health analysis.</span>
           <motion.span
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse' }}

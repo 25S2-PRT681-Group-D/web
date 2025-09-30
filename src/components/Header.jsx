@@ -18,7 +18,8 @@ const Header = () => {
   }
 
   const links = [
-    {path: '/', text: 'Dashboard'},
+    {path: '/', text: 'Home'},
+    {path: '/dashboard', text: 'Dashboard'},
     {path: '/new-inspection', text: 'New Inspection'},
     {path: '/my-records', text: 'My Records'},
   ]
@@ -28,7 +29,7 @@ const Header = () => {
       <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition duration-300">
         <img src={logo} className='w-[180px] h-auto' />
         <div className="hidden sm:block">
-          <span className="text-xs text-gray-500 font-medium">AI-Powered Plant Analysis</span>
+          <span className="text-base text-gray-500 font-medium">Plant Health Analysis</span>
         </div>
       </Link>
 
