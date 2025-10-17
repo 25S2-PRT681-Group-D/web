@@ -100,8 +100,8 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="relative">
-              <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-100 w-full max-w-md">
+            <div className="relative w-full flex justify-center items-center">
+              <div className="bg-white w-full lg:w-2/3 rounded-2xl shadow-2xl p-6 border border-gray-100">
                 {/* Dashboard Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
