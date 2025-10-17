@@ -44,7 +44,7 @@ const RootLayout = () => {
   return (
     <div className='w-full min-h-screen bg-cloudwhite flex flex-col font-zilla'>
       <Header />
-      <main className='flex-1 w-full'>
+      <main className='flex-1 w-full py-4'>
         <Outlet />
       </main>
       <Footer />

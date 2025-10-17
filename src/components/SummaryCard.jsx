@@ -1,6 +1,7 @@
 import React from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { cardHoverVariants, scaleInVariants } from '../utils/animations';
+import { scaleInVariants } from '../utils/animations';
 
 function SummaryCard({ title, value, icon = "📊" }) {
   return (
@@ -19,8 +20,8 @@ function SummaryCard({ title, value, icon = "📊" }) {
       >
         <motion.span 
           className="text-3xl"
-          animate={{ rotate: [0, 5, -5, 0] }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+          animate={{ rotate: [0, 30, 0, -30, 0] }}
+          transition={{ duration: 1, repeat: 1, repeatType: 'reverse' }}
         >
           {icon}
         </motion.span>
@@ -30,7 +31,7 @@ function SummaryCard({ title, value, icon = "📊" }) {
       </motion.div>
       <motion.p 
         className='text-savannagreen text-3xl font-semibold'
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
       >

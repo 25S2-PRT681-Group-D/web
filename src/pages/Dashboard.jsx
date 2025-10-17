@@ -179,7 +179,7 @@ const Dashboard = () => {
             </>
           ) : recentInspections.length > 0 ? (
             // Display recent inspections
-            recentInspections.map((inspection, index) => (
+            recentInspections.map((inspection) => (
               <InspectionCard
                 key={inspection.id}
                 plantName={inspection.plantName}
